@@ -1,0 +1,65 @@
+
+# In[2]:
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import matplotlib as mpl
+plt.style.use('ggplot')
+
+
+# In[3]:
+
+
+#kik- [mD] permeability for gas
+#Swc- critical water saturation
+#Sw- water saturation
+#krg- Relative gas permeability
+#krw- Relative water permeability
+#it is important to note that for two-phase reservoir Sg=1-Sw
+
+
+# In[4]:
+
+
+def krg(Sw,Swc):
+    krg=(((1-Sw)/(1-Swc))**2)*(1-((1-(1-Sw)-Swc)/(1-Swc))**2)
+    return krg
+
+def krw(Sw,Swc):
+    krw=(((Sw-Swc)/(1-Swc))**4)
+    return krw
+
+
+# In[5]:
+
+
+Swc=0.25
+Sw=np.linspace(Swc,1,100)
+y1=krg(Sw, 0.25)
+y2=krw(Sw, 0.25)
+plt.plot(Sw,y1,label='krg')
+plt.plot(Sw,y2,label='krw')
+plt.xlabel('Nasycenie wodą')
+plt.ylabel('Przepuszczalność względna')
+plt.legend()
+plt.axis([Swc,1,0,1])
+plt.savefig('figure.pdf')
+
+
+# In[6]:
+
+
+Swc=0.25
+Sw=np.linspace(Swc,1,100)
+y1=krg(Sw, 0.25)
+y2=krw(Sw, 0.25)
+plt.plot(Sw,y1,label='krg')
+plt.plot(Sw,y2,label='krw')
+plt.xlabel('Nasycenie wodą') #water saturation
+plt.ylabel('Przepuszczalność względna') #relative permeability
+plt.legend()
+plt.axis([Swc,1,0.01,1])
+plt.semilogy()
+
