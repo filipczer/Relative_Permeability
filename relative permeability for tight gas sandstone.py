@@ -1,6 +1,3 @@
-
-# coding: utf-8
-
 # In[1]:
 
 
@@ -11,10 +8,10 @@ import matplotlib as mpl
 plt.style.use('ggplot')
 
 
-# In[ ]:
+# In[2]:
 
 
-#kik- [mD] permeability for gas
+#kik- [mD] absolute permeability for gas
 #Swc- critical water saturation
 #Sgc- critical gas saturation
 #Swi- irreducible water saturation
@@ -24,7 +21,7 @@ plt.style.use('ggplot')
 #krw- Relative water permeability
 
 
-# In[2]:
+# In[3]:
 
 
 def Swc(kik): 
@@ -43,7 +40,7 @@ def krg_Corey(Sw,Swc,Sgc,p,q): #Relative permeability based on Corey equation
     return krg
 
 
-# In[3]:
+# In[4]:
 
 
 def Swi(kik): #10
@@ -61,46 +58,142 @@ def krw(Sw,Swc,r,kik): #7
 #6,7,10- equations from Cluff,Byrnes 2010- Permeability jail model
 
 
-# In[4]:
-
-
-kik = 0.1 #setting gas permeability
-
-
 # In[5]:
 
 
-Sw=np.linspace(0,1,100) #axis for water saturation
-y1=krg_Corey(Sw, Swc(kik), Sgc(kik), 2.3, 2) #function based on kik
-#parameters to create krg ((Sw, Swc(kik), Sgc(kik),p,q))
-y2=krg_Corey(Sw, Swc(1), Sgc(1), 1.7, 2)
-y3=krg_Corey(Sw, Swc(1), Sgc(1), 2.3, 2)
-y4=krw(Sw,0.25,4,0.01)
+kik = 0.1 #setting gas permeability [mD]
 
 
 # In[6]:
 
 
-plt.plot(Sw,y1,Sw,y2,Sw,y3,Sw,y4) #relative permeability plot
+Sw=np.linspace(0,1,100) #axis for water saturation
+y1=krg_Corey(Sw, Swc(kik), Sgc(kik), 1.7, 2) #function based on kik
+#parameters to create krg ((Sw, Swc(kik), Sgc(kik),p,q))
+y2=krg_Corey(Sw, Swc(0.0001), Sgc(0.0001), 1.7, 2)#ultra tight sandstone
+y3=krg_Corey(Sw, Swc(2), Sgc(2), 1.7, 2)
+y4=krw(Sw,0.25,4,0.1)
+y5=krw(Sw,0.25,4,0.0001)
+y6=krw(Sw,0.25,4,2)
+y7=krg_Corey(Sw, Swc(kik), Sgc(kik), 1.7, 2) 
+y8=krg_Corey(Sw, Swc(kik), Sgc(kik), 4, 2) #change in exp p to check the influence
+y9=krg_Corey(Sw, Swc(kik), Sgc(kik), 1.7, 4) #change in exp q to check the influence
+
+
+# In[7]:
+
+
+plt.plot(Sw,y1,label='krg, kik=0.1mD') #tight sandstone- upper bound 0.1mD
+plt.plot(Sw,y2,label='krg, kik=0.0001mD') #ultratight sandstone 0.0001mD
+plt.plot(Sw,y3,label='krg, kik=2mD') #conventional reservoir 2D
+#relative permeability plot
 plt.axis([0, 1, 0, 1]) #X and Y axis
-plt.xlabel('Water Saturation (%)')
-plt.ylabel('Gas Relative Permeability')
-
-
-# In[19]:
-
-
-
-plt.plot(Sw,y1,Sw,y2,Sw,y3,Sw,y4)
-plt.xlabel('Water Saturation (%)')
-plt.ylabel('Gas Relative Permeability')
-plt.semilogy(1,0)
+plt.xlabel('Nasycenie wodą')
+plt.ylabel('Przepuszczalność względna gazu')
+plt.legend()
+plt.savefig('gas1.pdf')
 
 
 # In[8]:
 
 
+plt.plot(Sw,y7,label='krg, p=1.7, q=2') #tight sandstone- upper bound 0.1mD
+plt.plot(Sw,y8,label='krg, p=4, q=2') #ultratight sandstone 0.0001mD
+plt.plot(Sw,y9,label='krg, p=1.7, q=4') #conventional reservoir 2D
+#relative permeability plot
+plt.axis([0, 1, 0, 1]) #X and Y axis
+plt.xlabel('Nasycenie wodą')
+plt.ylabel('Przepuszczalność względna gazu')
+plt.legend()
+plt.savefig('gas3.pdf')
+
+
+# In[9]:
+
+
+plt.plot(Sw,y1,label='krg, kik=0.1mD') #tight sandstone- upper bound 0.1mD
+plt.plot(Sw,y2,label='krg, kik=0.0001mD') #ultratight sandstone 0.0001mD
+plt.plot(Sw,y3,label='krg, kik=2mD') #conventional reservoir 2D
+#relative permeability plot
+plt.axis([0, 1, 0.01, 1]) #X and Y axis
+plt.xlabel('Nasycenie wodą')
+plt.ylabel('Przepuszczalność względna gazu')
+plt.legend()
+plt.semilogy()
+plt.savefig('gas2.pdf')
+
+
+# In[10]:
+
+
+plt.plot(Sw,y4,label='krw, kik=0.1mD') #tight sandstone- upper bound 0.1mD
+plt.plot(Sw,y5,label='krw, kik=0.0001mD') #ultratight sandstone 0.0001mD
+plt.plot(Sw,y6,label='krw, kik=2mD') #conventional reservoir 2D
+#relative permeability plot
+plt.axis([0, 1, 0, 1]) #X and Y axis
+plt.xlabel('Nasycenie wodą')
+plt.ylabel('Przepuszczalność względna wody')
+plt.legend()
+plt.savefig('wat1.pdf')
+
+
+# In[11]:
+
+
+plt.plot(Sw,y4,label='krw, kik=0.1mD') #tight sandstone- upper bound 0.1mD
+plt.plot(Sw,y5,label='krw, kik=0.0001mD') #ultratight sandstone 0.0001mD
+plt.plot(Sw,y6,label='krw, kik=2mD') #conventional reservoir 2D
+#relative permeability plot
+plt.axis([0, 1, 0.01, 1]) #X and Y axis
+plt.xlabel('water saturation')
+plt.ylabel('relative permeability for water')
+plt.legend()
+plt.semilogy()
+plt.savefig('wat2.pdf')
+
+
+# In[12]:
+
+
+plt.plot(Sw,y1,label='krg, kik=0.1mD') #tight sandstone- upper bound 0.1mD
+plt.plot(Sw,y4,label='krw, kik=0.1mD') #krw with kik=0.1mD - correlated with y1
+#relative permeability plot
+plt.axis([0, 1, 0, 1]) #X and Y axis
+plt.xlabel('water saturation') #nasycenie wodą
+plt.ylabel('relative permeability') #przepuszczalność względna
+plt.legend()
+plt.savefig('un1.pdf')
+
+
+# In[13]:
+
+
+plt.plot(Sw,y1,label='krg, kik=0.1mD') #tight sandstone- upper bound 0.1mD
+plt.plot(Sw,y4,label='krw, kik=0.1mD') #krw with kik=0.1mD - correlated with y1
+plt.axis([0, 1, 0.01, 1]) #OY has to be >0!!!
+plt.xlabel('water permeability')
+plt.ylabel('relative permeability')
+plt.semilogy(1,0)
+plt.legend()
+plt.savefig('un2.pdf')
+
+
+# In[14]:
+
 
 df = pd.DataFrame([Sw,y1,y2,y4]).T
-df.rename({0:"Sw",1:"kik=0.1",2:'kik=1',3:'krw'}, axis='columns') #ustawianie nazw kolumn tabeli
+df.rename({0:"Sw",1:"kik=y1",2:'kik=y2',3:'krw'}, axis='columns')
+#setting up the table
+
+
+# In[15]:
+
+
+df.loc[np.nanargmin(np.absolute(y1-y4))] #Check a what saturation krw and krg meets, 1- kik, 3- krw
+
+
+# In[16]:
+
+
+df.info()
 
